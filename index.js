@@ -4,7 +4,6 @@ let fs = require('fs'),
     filename = process.argv[2],
     resultsFile = process.argv[3];
 
-
 function readContent(callback) {
     fs.readFile(filename, 'utf8', function (err, data) {
         if (err) return callback(err)
