@@ -1,0 +1,4 @@
+---- 101 url ----
+3 requer = 92; time 365
+10 requer = 101; time 194
+10 requer = 100; time 185
