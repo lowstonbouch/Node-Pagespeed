@@ -5,7 +5,7 @@ let fs = require('fs'),
     filename = process.argv[2],
     resultsFile = process.argv[3];
 
-let cR = 10;
+let cR = 20; // 20 request async
 let time = 1;
 let counter = 0;
 let length = 0;
@@ -69,10 +69,20 @@ const addInFile = (result,massUrl,error,url) => {
             if (error) throw error;
         }); 
     } 
+    if(length === 0 && massErrors.length){
+        fs.appendFile(resultsFile, `This url not request:\n`, function (error) {
+            if (error) throw error;
+        }); 
+        for(let i = 0; i < massErrors.length; i++){
+            fs.appendFile(resultsFile, `${massErrors[i]}\n`, function (error) {
+                if (error) throw error;
+            }); 
+        }
+    }
 }
 
 const request = (url,massUrl,number,i) =>{
-    delay(i*1000)
+    delay(i*100)
     .then(()=>{
         getJSONAsync(url)
         .then((result) => {
@@ -107,10 +117,6 @@ const request = (url,massUrl,number,i) =>{
 
 const main = (massUrl) => {
     massResult = [];
-    if(massUrl.length === 0){
-        console.log(massErrors);
-        return;
-    }
     if(Math.floor(time/100) <  Math.floor(counter/100)){
         delay((counter-timer)*1000)
         .then(() => {
