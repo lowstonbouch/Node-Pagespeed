@@ -4,7 +4,7 @@ let fs = require('fs'),
     resultsFile = process.argv[3];
 
 const main = (massUrl) => {
-    let http = 'http://';
+    const http = 'http://';
     for(let i = 0; i < massUrl.length; i++){
         fs.appendFile(resultsFile, `${http + massUrl[i]}\n`, function (error) {
             if (error) throw error;
@@ -28,5 +28,3 @@ readContent((err, data) => {
     length = massUrl.length;
     main(massUrl);
 })
-
-
