@@ -12,6 +12,7 @@ let counterError = 0;
 let massResult = [];
 let massErrors = [];
 let massUrl = [];
+const http = 'http://';
 
 
 const delay = (time) => {
@@ -41,7 +42,7 @@ async function getJSONAsync(url) {
         let json = await axios({
             method:'get',
             url:`https://www.googleapis.com/pagespeedonline/v4/runPagespeed?url=${url}/&key=AIzaSyD6SAwbEsyVwfga3tTyrEVoYUeIjyh0zCo`,
-            timeout: 20000,
+            timeout: 60000,
           });
         return {
             url: json.data.id,
@@ -63,7 +64,7 @@ async function getJSONAsync(url) {
 const addInFile = (result, i, error, url) => {
     counter++;
     length--;
-    massResult.push(result.url); 
+    massResult.push(result.url);
     if (massResult.length === cR) {
         // massUrl.splice(0,cR);
         main();
@@ -91,7 +92,7 @@ const request = (url, numberRequest, i) => {
                     console.log(url);
                     addInFile(result, i, result.error, url);
                 } else {  
-                    delay(3000)
+                    delay(1000)
                     .then(() => {
                         request(url, ++numberRequest, i);
                     }) 
@@ -102,18 +103,23 @@ const request = (url, numberRequest, i) => {
         })
         .catch((error) => {
             console.log('REQUEST',error); //no complete
-            counterError++;
+            console.log(url);
             massUrl.unshift(url);
-            console.log('INFO:',counterError,cR - massResult.length)
-            if (counterError === cR - massResult.length) {
-                delay(10000)
-                .then(() => {
-                    console.log('restart');
-                    main();
-                })  
-            } 
+            counterError++;
+            checkRequest(counterError);
         }); 
     }) 
+}
+
+const checkRequest = (counterError) => {
+    delay(100)
+    .then(() => {
+        console.log('INFO:',counterError,cR - massResult.length)
+        if (counterError === cR - massResult.length) {
+                console.log('restart');
+                main();
+        } 
+    })
 }
 
 const main = () => {
@@ -127,8 +133,10 @@ const main = () => {
         .then(main);
     } else {
         for(let i = 0; i <cR; i++) {
-            if(massUrl[0]) request(massUrl.shift(), 1, i);    
-            // if(massUrl[i]) request(massUrl[i], 1, i);    
+            if(massUrl[0].length){
+                massUrl[0].indexOf('http://') !== 0 ? request(http + massUrl.shift(), 1, i) : request(massUrl.shift(), 1, i);  
+                // if(massUrl[i]) request(massUrl[i], 1, i);
+            }     
         } 
     } 
 }
@@ -146,7 +154,7 @@ const readContent = (callback) => {
 readContent((err, data) => {
     if (err) throw err;
     massUrl = data.split('\r\n');
-    length = massUrl.length;
+    length = massUrl.length - 1;
     main();
     timer();
 })

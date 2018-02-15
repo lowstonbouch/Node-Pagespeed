@@ -5,3 +5,7 @@
 ---- 389 url/dalay(100) ----
 10 requer = 361; time 864
 20 requer = 360; time 595 
+---- 112 url/ request 20000 ----
+20 requer = 91; time 216
+---- 112 url ----
+20 requer 90; time 250 
